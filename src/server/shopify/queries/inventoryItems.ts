@@ -5,7 +5,17 @@ export const getInventoryItemsQuery = /* GraphQL */ `
     inventoryItems(first: 250) {
       edges {
         node {
+          id
+          sku
           ...inventoryItem
+          variant {
+            product {
+              title
+              productType
+              status
+              tags
+            }
+          }
         }
       }
     }

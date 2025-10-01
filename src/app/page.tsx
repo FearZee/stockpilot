@@ -3,61 +3,41 @@ import { ProductOverview } from "@/components/productOverview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchInventoryItems, fetchOrders } from "@/server/shopify";
 import { BarChart3, Package } from "lucide-react";
+import { db } from "..";
+import { orders, products } from "@/db/schema";
 
 export default async function Home() {
-  const orders = await fetchOrders();
-  const inventoryItems = await fetchInventoryItems();
+  const inventoryItems = await db.select().from(products);
+  const orderItems = await db.select().from(orders);
 
   // group orders by createdAt and return as { date: string; sales: number }
-  const ordersByDate = orders.reduce((acc, order) => {
-    const date = new Date(order.createdAt).toISOString().split("T")[0];
-    acc[date] = (acc[date] || 0) + 1;
-    return acc;
-  }, {} as { [key: string]: number });
 
   // Generate last 7 days with 0 sales for missing dates
-  const salesData = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    const dateString = date.toISOString().split("T")[0];
-    return {
-      date: dateString,
-      sales: ordersByDate[dateString] || 0,
-    };
-  }).reverse();
 
   const totalProducts = inventoryItems.length;
   const averageDSR =
-    salesData.reduce((acc, sales) => acc + sales.sales, 0) / salesData.length;
+    orderItems.reduce((acc, sales) => acc + sales.sales, 0) / orderItems.length;
 
   const lowStockCount = inventoryItems.filter((item) => {
-    return item.item.variant.inventoryQuantity < 14;
+    return item.inventoryQuantity < 14;
   }).length;
 
   const criticalStockCount = inventoryItems.filter(
-    (item) => item.item.variant.inventoryQuantity < 7
+    (item) => item.inventoryQuantity < 7
   ).length;
 
-  console.log(inventoryItems[0]);
-  console.log(JSON.stringify(orders, null, 2));
-
-  const products = inventoryItems.map((item) => {
-    const dailySalesRate = orders.filter((order) =>
-      order.lineItems.edges.some(
-        (edge) => edge.node.variant?.sku === item.item.variant.sku
-      )
-    ).length;
+  const items = inventoryItems.map((item) => {
     return {
       id: item.id,
-      name: item.item.variant.title,
-      sku: item.item.variant.sku,
-      stock: item.item.variant.inventoryQuantity,
-      price: item.item.variant.price,
-      image: item.item.variant.image?.url ?? null,
-      dailySalesRate: dailySalesRate,
+      name: item.title,
+      sku: item.sku,
+      stock: item.inventoryQuantity,
+      price: 0,
+      image: null,
+      dailySalesRate: item.dailySalesRate,
       stockCoverage: Math.min(
         180,
-        item.item.variant.inventoryQuantity / dailySalesRate
+        item.inventoryQuantity / item.dailySalesRate
       ),
     };
   });
@@ -82,12 +62,12 @@ export default async function Home() {
             lowStockCount={lowStockCount}
             critStockCount={criticalStockCount}
             averageDSR={averageDSR}
-            salesData={salesData}
+            salesData={orderItems}
           />
         </TabsContent>
 
         <TabsContent value="products">
-          <ProductOverview products={products} />
+          <ProductOverview products={items} />
         </TabsContent>
       </Tabs>
     </div>

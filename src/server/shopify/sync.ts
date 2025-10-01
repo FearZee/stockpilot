@@ -72,11 +72,17 @@ export async function runSync() {
       await db.update(orders).set({ sales }).where(eq(orders.date, date));
     } else {
       // Insert new record
-      await db.insert(orders).values({
-        id: randomUUID(),
-        date,
-        sales,
-      });
+      await db
+        .insert(orders)
+        .values({
+          id: randomUUID(),
+          date,
+          sales,
+        })
+        .onConflictDoUpdate({
+          target: orders.date,
+          set: { sales },
+        });
     }
   }
 

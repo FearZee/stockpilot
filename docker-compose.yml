@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  app:
+    image: docker.io/library/stockpilot:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_URL=file:/app/data/local.db
+      - SHOPIFY_STORE_DOMAIN=${SHOPIFY_STORE_DOMAIN}
+      - SHOPIFY_ACCESS_TOKEN=${SHOPIFY_ACCESS_TOKEN}
+      - SHOPIFY_GRAPHQL_API_ENDPOINT=${SHOPIFY_GRAPHQL_API_ENDPOINT}
+    volumes:
+      - app_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  app_data:

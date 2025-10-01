@@ -10,14 +10,14 @@ export function StockCoverageIndicator({
   className = "",
 }: StockCoverageIndicatorProps) {
   const getStatusConfig = (days: number) => {
-    if (days > 30) {
+    if (days <= 7) {
       return {
-        variant: "default" as const,
-        color: "bg-green-100 text-green-800 border-green-200",
-        status: "Gut",
-        icon: "🟢",
+        variant: "destructive" as const,
+        color: "bg-red-100 text-red-800 border-red-200",
+        status: "Kritisch",
+        icon: "🔴",
       };
-    } else if (days >= 7) {
+    } else if (days <= 14) {
       return {
         variant: "secondary" as const,
         color: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -26,10 +26,10 @@ export function StockCoverageIndicator({
       };
     } else {
       return {
-        variant: "destructive" as const,
-        color: "bg-red-100 text-red-800 border-red-200",
-        status: "Kritisch",
-        icon: "🔴",
+        variant: "default" as const,
+        color: "bg-green-100 text-green-800 border-green-200",
+        status: "Gut",
+        icon: "🟢",
       };
     }
   };

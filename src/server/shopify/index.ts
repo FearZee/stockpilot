@@ -60,6 +60,7 @@ function removeEdgesAndNodes<T>(array: Connection<T>): T[] {
 export const fetchOrders = async () => {
   const { status, body } = await shopifyFetch<OrderQuery>({
     query: getOrdersQuery,
+    cache: "no-store",
   });
 
   const orders = body.data.orders.edges.map((edge) => edge.node);
@@ -80,6 +81,7 @@ const reshapeInventoryItems = (inventoryItems: any[]) => {
 export const fetchInventoryItems = async () => {
   const { status, body } = await shopifyFetch<InventoryItemQuery>({
     query: getInventoryItemsQuery,
+    cache: "no-store",
   });
 
   console.log(JSON.stringify(body, null, 2));

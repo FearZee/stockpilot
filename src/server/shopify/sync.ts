@@ -14,6 +14,8 @@ export async function runSync() {
       fetchOrders(),
     ]);
 
+    console.log(shopifyProducts.length, shopifyOrders.length);
+
     // Process products in batch
     const productInserts = shopifyProducts.map((p) => {
       const dsr = calcDailySales(p.item.variant.sku, shopifyOrders);

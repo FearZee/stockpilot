@@ -1,6 +1,19 @@
-import { Package } from "lucide-react";
+"use client";
+
+import { Package, RefreshCw } from "lucide-react";
+import { Button } from "./ui/button";
+import { runSync } from "@/server/shopify/sync";
+import { useState } from "react";
 
 export const Header = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await runSync();
+    setIsRefreshing(false);
+  };
+
   return (
     <div className="border-b bg-card">
       <div className="container mx-auto px-4 py-4">
@@ -16,7 +29,7 @@ export const Header = () => {
               </p>
             </div>
           </div>
-          {/* <Button
+          <Button
             onClick={handleRefresh}
             disabled={isRefreshing}
             variant="outline"
@@ -26,7 +39,7 @@ export const Header = () => {
               className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
             />
             {isRefreshing ? "Aktualisiere..." : "Daten aktualisieren"}
-          </Button> */}
+          </Button>
         </div>
       </div>
     </div>

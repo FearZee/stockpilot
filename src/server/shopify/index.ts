@@ -72,6 +72,7 @@ const reshapeInventoryItems = (inventoryItems: any[]) => {
     const item = removeEdgesAndNodes(inventoryItem.inventoryLevels)?.[0] as any;
     return {
       ...item,
+      title: inventoryItem.variant.product.title,
     };
   });
 };
@@ -81,7 +82,7 @@ export const fetchInventoryItems = async () => {
     query: getInventoryItemsQuery,
   });
 
-  // console.log(JSON.stringify(body, null, 2));
+  console.log(JSON.stringify(body, null, 2));
 
   const inventoryItems = removeEdgesAndNodes(body.data.inventoryItems);
   const reshapedInventoryItems = reshapeInventoryItems(inventoryItems);

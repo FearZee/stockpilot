@@ -23,6 +23,7 @@ export type InventoryItem = {
   id: string;
   title: string;
   item: {
+    id: string;
     variant: {
       availableForSale: boolean;
       inventoryQuantity: number;
@@ -30,6 +31,14 @@ export type InventoryItem = {
       title: string;
       sku: string;
       image?: Image;
+    };
+  };
+  variant: {
+    product: {
+      title: string;
+      productType: string;
+      status: string;
+      tags: string[];
     };
   };
 };

@@ -56,7 +56,9 @@ export function Dashboard({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{averageDSR.toFixed(1)}</div>
+            <div className="text-2xl font-bold">
+              {isNaN(averageDSR) ? 0 : averageDSR.toFixed(1)}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               Durchschnittliche Daily Sales Rate
             </p>

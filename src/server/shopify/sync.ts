@@ -16,16 +16,30 @@ export async function runSync() {
     const inventoryQuantity = p.item.variant.inventoryQuantity;
     const daysLeft = dsr > 0 ? inventoryQuantity / dsr : 0;
 
-    await db.insert(products).values({
-      id: p.item.id,
-      title: p.title,
-      sku: p.item.variant.sku,
-      inventoryQuantity: inventoryQuantity,
-      price: p.item.variant.price,
-      dailySalesRate: dsr,
-      daysLeft: daysLeft,
-      updatedAt: new Date().toISOString(),
-    });
+    await db
+      .insert(products)
+      .values({
+        id: p.item.id,
+        title: p.title,
+        sku: p.item.variant.sku,
+        inventoryQuantity: inventoryQuantity,
+        price: Number(p.item.variant.price),
+        dailySalesRate: dsr,
+        daysLeft: daysLeft,
+        updatedAt: new Date().toISOString(),
+      })
+      .onConflictDoUpdate({
+        target: products.id,
+        set: {
+          title: p.title,
+          sku: p.item.variant.sku,
+          inventoryQuantity: inventoryQuantity,
+          price: Number(p.item.variant.price),
+          dailySalesRate: dsr,
+          daysLeft: daysLeft,
+          updatedAt: new Date().toISOString(),
+        },
+      });
   }
 
   // Group orders by date

@@ -84,8 +84,6 @@ export const fetchInventoryItems = async () => {
     cache: "no-store",
   });
 
-  console.log(JSON.stringify(body, null, 2));
-
   const inventoryItems = removeEdgesAndNodes(body.data.inventoryItems);
   const reshapedInventoryItems = reshapeInventoryItems(inventoryItems);
 

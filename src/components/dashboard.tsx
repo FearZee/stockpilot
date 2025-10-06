@@ -42,7 +42,9 @@ export function Dashboard({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalProducts}</div>
+            <div className="text-2xl font-bold" data-testid="total-products">
+              {totalProducts}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               Aktive Produkte im Shop
             </p>
@@ -56,7 +58,7 @@ export function Dashboard({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold" data-testid="average-dsr">
               {isNaN(averageDSR) ? 0 : averageDSR.toFixed(1)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -73,7 +75,9 @@ export function Dashboard({
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{lowStockCount}</div>
+              <div className="text-2xl font-bold" data-testid="low-stock-count">
+                {lowStockCount}
+              </div>
               <Badge variant="destructive" className="text-xs">
                 {criticalStockPercentage}%
               </Badge>
@@ -92,7 +96,12 @@ export function Dashboard({
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{critStockCount}</div>
+              <div
+                className="text-2xl font-bold"
+                data-testid="crit-stock-count"
+              >
+                {critStockCount}
+              </div>
               <Badge variant="destructive" className="text-xs">
                 {criticalStockPercentage}%
               </Badge>
@@ -109,7 +118,7 @@ export function Dashboard({
           <CardTitle>Verkäufe der letzten 7 Tage</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
+          <div className="h-80" data-testid="sales-data">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesData}>
                 <CartesianGrid strokeDasharray="3 3" />

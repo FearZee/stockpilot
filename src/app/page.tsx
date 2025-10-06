@@ -1,18 +1,31 @@
 import { Dashboard } from "@/components/dashboard";
 import { ProductOverview } from "@/components/productOverview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fetchInventoryItems, fetchOrders } from "@/server/shopify";
+import { orders, products } from "@/db/schema";
 import { BarChart3, Package } from "lucide-react";
 import { db } from "..";
-import { orders, products } from "@/db/schema";
 
 export default async function Home() {
   const inventoryItems = await db.select().from(products);
   const orderItems = await db.select().from(orders);
 
-  // group orders by createdAt and return as { date: string; sales: number }
+  // generate last 7 days with 0 sales for missing dates
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    return date.toISOString().split("T")[0];
+  }).reverse();
 
-  // Generate last 7 days with 0 sales for missing dates
+  const ordersByDate = orderItems.reduce((acc, order) => {
+    const date = new Date(order.date).toISOString().split("T")[0];
+    acc[date] = (acc[date] || 0) + order.sales;
+    return acc;
+  }, {} as { [key: string]: number });
+
+  const salesData = last7Days.map((date) => ({
+    date,
+    sales: ordersByDate[date] || 0,
+  }));
 
   const totalProducts = inventoryItems.length;
   const averageDSR =
@@ -58,16 +71,17 @@ export default async function Home() {
 
         <TabsContent value="dashboard">
           <Dashboard
+            data-testid="dashboard"
             totalProducts={totalProducts}
             lowStockCount={lowStockCount}
             critStockCount={criticalStockCount}
             averageDSR={averageDSR}
-            salesData={orderItems}
+            salesData={salesData}
           />
         </TabsContent>
 
         <TabsContent value="products">
-          <ProductOverview products={items} />
+          <ProductOverview data-testid="product-overview" products={items} />
         </TabsContent>
       </Tabs>
     </div>
